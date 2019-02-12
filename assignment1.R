@@ -98,5 +98,8 @@ for (i in 1:length(lamdas_vector)){
   }
 }
 
-sprintf("The best lamda was: %#.2f with an MSE of %#.5f", best_lamda, best_mse)
 # plot_ly(x=X1, y=X2, z=Y, type="scatter3d", mode="markers")
+# Calculate the best betas
+best_betas = get_ridge_estimators(data, Y, best_lamda)
+sprintf("The best lamda was: %#.2f with an MSE of %#.5f. The best betas are: %#.2f, %#.2f", 
+          best_lamda, best_mse, best_betas[1], best_betas[2])
