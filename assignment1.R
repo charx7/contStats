@@ -15,7 +15,7 @@ X1 = rnorm(10, 0, 1);
 epsilons = rnorm(10,0,1)
 
 # Specify the tau parameter
-tau = 0.9
+tau = 0.6
 
 # The U parameter for the generation of X2
 U = rnorm(10,0,tau^2)
@@ -30,7 +30,7 @@ data = cbind(X1, X2)
 Y = X1 - X2 + epsilons
 
 # Set up the lamda parameter
-lamda = 0.5
+lamda = 0.6
 
 # Func that calculates the ridge parameters
 get_ridge_estimators = function(data, Y, lamda){
@@ -39,7 +39,7 @@ get_ridge_estimators = function(data, Y, lamda){
   
   # Calculate t(X) * X
   # Note solve(arg) calculates the inverse of a sqr matrix
-  betas_ridge = (solve((t(data) %*% data) + lamdaMatrix) %*% t(data)) %*% Y
+  betas_ridge = solve((t(data) %*% data) + lamdaMatrix) %*% t(data) %*% Y
   
   # Return
   return(betas_ridge)
