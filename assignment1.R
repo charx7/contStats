@@ -6,19 +6,22 @@ library('pracma')
 rm(list = ls())
 
 # Set random seed for reproducibility
-set.seed(42)
+set.seed(47)
+
+# Set length of the simulation (number of data points)
+N = 10
 
 # Generate 10 data points which are N(0,1)
-X1 = rnorm(10, 0, 1);
+X1 = rnorm(N, 0, 1);
 
 # Generate the epsilons vector
-epsilons = rnorm(10,0,1)
+epsilons = rnorm(N,0,1)
 
 # Specify the tau parameter
-tau = 0.6
+tau = 0.7
 
 # The U parameter for the generation of X2
-U = rnorm(10,0,tau^2)
+U = rnorm(N,0,tau^2)
 
 # Calculate X2
 X2 = (sqrt(1-tau^2) * X1) + U
@@ -28,9 +31,6 @@ data = cbind(X1, X2)
 
 # Generate the response vector Y
 Y = X1 - X2 + epsilons
-
-# Set up the lamda parameter
-lamda = 0.6
 
 # Func that calculates the ridge parameters
 get_ridge_estimators = function(data, Y, lamda){
@@ -84,7 +84,7 @@ for (i in 1:length(lamdas_vector)){
     current_mse_vector = append(current_mse_vector, current_error)
   }
   # Reduce the error vector
-  avg_error = sum(current_mse_vector)/10
+  avg_error = sum(current_mse_vector)/N
   
   if (i %% 100 == 0) {
     # Print Results, NOTE: you need to use cat() because sprintf doesnt print in non-interactive mode
