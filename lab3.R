@@ -2,6 +2,7 @@
 rm(list=ls())
 cat("\014") 
 
+library(MASS)
 # Set random seed for reproducibility
 set.seed(47)
 
@@ -21,30 +22,39 @@ data = cbind(ones_vector,X)
 
 ############ Bootstrap ###################
 # Init the sigmas vector as empty
-beta0_sigmas_vector = numeric()
-beta1_sigmas_vector = numeric()
+beta0Vector = numeric()
+beta1Vector = numeric()
 bootTrials = 1000
 for(i in 1:bootTrials) {
   set.seed(47 + i)
   # Sample from your data with replacement
-  currSample = data[sample(N, replace = TRUE),]
+  index       = sample(N, replace = TRUE)
+  currSample  = data[index,]
+  currSampleY = Y[index]
   
+  # Betas Vector 
+  currBetasVector = t(ginv(currSample %*% t(currSample)) %*% currSample) %*% currSampleY
   # Compute the sample variances for the current Bootstrap Sample
-  currSigma = (1/(N-2)) * t((currSample %*%  betas) - Y) %*% ((currSample %*% betas) - Y)
+  #currSigma = (1/(N-2)) * t((currSample %*%  betas) - Y) %*% ((currSample %*% betas) - Y)
   
   # Compute the variance vector from the estimators
-  currBetaSigma =  currSigma[1,1] * solve(t(currSample) %*% currSample)
+  #currBetaSigma =  currSigma[1,1] * solve(t(currSample) %*% currSample)
   
   # append to the sigmas vector
-  beta0_sigmas_vector = append(currBetaSigma[1,1], beta0_sigmas_vector)
-  beta1_sigmas_vector = append(currBetaSigma[2,2], beta1_sigmas_vector)
+  beta0Vector = append(currBetasVector[1], beta0Vector)
+  beta1Vector = append(currBetasVector[2], beta1Vector)
+  #beta1_sigmas_vector = append(currBetaSigma[2,2], beta1_sigmas_vector)
 }
 
 # Compute a histogram of the test statistic
-hist(beta0_sigmas_vector)
-hist(beta1_sigmas_vector)
+hist(beta0Vector)
+hist(beta1Vector)
+
 # Compute the quantiles
 print('############ RESULTS ##########################')
 print('The quantiles for the var(b0) and var(b1) are: ')
-quantile(beta0_sigmas_vector, probs = c(0.025, 0.975))
-quantile(beta1_sigmas_vector, probs = c(0.025, 0.975))
+quantile(beta0Vector, probs = c(0.025, 0.975))
+quantile(beta1Vector, probs = c(0.025, 0.975))
+
+var(beta0Vector)
+var(beta1Vector)
